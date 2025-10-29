@@ -1,8 +1,14 @@
-# BookIt: Experiences & Slots
+# Highway Delite: Experiences & Slots Booking Platform
 
-A full-stack web application for discovering and booking travel experiences across India. Built with React + TypeScript + Vite on the frontend and Node.js + Express + PostgreSQL on the backend.
+A full-stack web application for discovering and booking travel experiences across India. Built with React + TypeScript + Vite on the frontend and Node.js + Express + MongoDB on the backend.
 
-![BookIt](https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&h=400&fit=crop)
+![Highway Delite](https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&h=400&fit=crop)
+
+## 🌐 Live Demo
+
+- **Frontend**: [https://highway-delite-beryl.vercel.app](https://highway-delite-beryl.vercel.app)
+- **Backend API**: [https://highway-delite-x0ea.onrender.com/api](https://highway-delite-x0ea.onrender.com/api)
+- **GitHub Repository**: [https://github.com/M1CTIAN/Highway-Delite](https://github.com/M1CTIAN/Highway-Delite)
 
 ## 🚀 Features
 
@@ -17,7 +23,9 @@ A full-stack web application for discovering and booking travel experiences acro
 
 ## 📋 Table of Contents
 
+- [Live Demo](#live-demo)
 - [Tech Stack](#tech-stack)
+- [Features](#features)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Running the Application](#running-the-application)
@@ -58,8 +66,8 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd "Highway Delite"
+git clone https://github.com/M1CTIAN/Highway-Delite.git
+cd Highway-Delite
 ```
 
 ### 2. Install Backend Dependencies
@@ -112,6 +120,7 @@ FRONTEND_URL=http://localhost:5173
 **Note**: For MongoDB Atlas (cloud), use:
 ```env
 MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/bookit_db
+NODE_ENV=production
 ```
 
 4. **Run database seed script**:
@@ -284,37 +293,77 @@ The seed script creates 8 diverse experiences:
 
 ## 🌐 Deployment
 
-### Backend Deployment (Render/Railway)
+This application is deployed and live at:
+- **Frontend**: Vercel - [https://highway-delite-beryl.vercel.app](https://highway-delite-beryl.vercel.app)
+- **Backend**: Render - [https://highway-delite-x0ea.onrender.com](https://highway-delite-x0ea.onrender.com)
+- **Database**: MongoDB Atlas (Cloud)
 
-1. Create a new PostgreSQL database on your hosting provider
-2. Update environment variables with production database credentials
-3. Deploy the backend folder
-4. Run the seed script to populate data
+### Backend Deployment (Render)
 
-### Frontend Deployment (Vercel/Netlify)
+1. **Create MongoDB Atlas Database**:
+   - Sign up at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+   - Create a new cluster (free tier available)
+   - Get your connection string: `mongodb+srv://<username>:<password>@cluster.mongodb.net/bookit_db`
 
-1. Update `VITE_API_URL` in frontend `.env` to point to your deployed backend
-2. Build the frontend: `npm run build`
-3. Deploy the `dist` folder to your hosting provider
+2. **Deploy on Render**:
+   - Sign up at [Render](https://render.com)
+   - Create a new **Web Service**
+   - Connect your GitHub repository
+   - Configure:
+     - **Build Command**: `cd backend && npm install`
+     - **Start Command**: `npm start` (NOT `npm run dev`)
+     - **Root Directory**: `backend`
+   
+3. **Add Environment Variables on Render**:
+   ```env
+   MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/bookit_db
+   PORT=5000
+   NODE_ENV=production
+   FRONTEND_URL=https://highway-delite-beryl.vercel.app
+   ```
 
-### Environment Variables for Production
+4. **Seed the Database**:
+   - After deployment, run the seed script locally pointing to Atlas:
+   ```bash
+   cd backend
+   npm run seed
+   ```
 
-**Backend**:
-```env
-DB_HOST=<your-db-host>
-DB_PORT=5432
-DB_NAME=<your-db-name>
-DB_USER=<your-db-user>
-DB_PASSWORD=<your-db-password>
-PORT=5000
-NODE_ENV=production
-FRONTEND_URL=<your-frontend-url>
-```
+### Frontend Deployment (Vercel)
 
-**Frontend**:
-```env
-VITE_API_URL=<your-backend-api-url>
-```
+1. **Deploy on Vercel**:
+   - Sign up at [Vercel](https://vercel.com)
+   - Import your GitHub repository
+   - Configure:
+     - **Framework Preset**: Vite
+     - **Root Directory**: `frontend`
+     - **Build Command**: `npm run build`
+     - **Output Directory**: `dist`
+
+2. **Add Environment Variables on Vercel**:
+   - Go to Project Settings → Environment Variables
+   - Add:
+     ```
+     VITE_API_URL=https://highway-delite-x0ea.onrender.com/api
+     ```
+   - Apply to: Production, Preview, Development
+   - Redeploy after adding variables
+
+### Important Notes
+
+- **CORS Configuration**: Backend allows both localhost and Vercel domains
+- **Start Command**: Use `npm start` (not `npm run dev`) on Render to avoid nodemon errors
+- **Environment Variables**: Must be set in hosting platform (Render/Vercel), not just in `.env` files
+- **Database**: MongoDB Atlas free tier is sufficient for testing
+
+### Deployment Checklist
+
+- ✅ MongoDB Atlas database created and seeded
+- ✅ Backend deployed on Render with correct environment variables
+- ✅ Frontend deployed on Vercel with API URL configured
+- ✅ CORS configured to allow Vercel domain
+- ✅ All environment variables set on hosting platforms
+- ✅ Application tested end-to-end on production URLs
 
 ## 🧪 Testing the Application
 
@@ -340,11 +389,12 @@ VITE_API_URL=<your-backend-api-url>
 
 **Database Connection Error**:
 ```bash
-# Check if PostgreSQL is running
-sudo service postgresql status
+# Check if MongoDB is running (local)
+# Windows
+net start MongoDB
 
-# Verify database exists
-psql -U postgres -l
+# Verify connection to MongoDB Atlas
+# Check your connection string in .env
 ```
 
 **Port Already in Use**:
@@ -352,6 +402,11 @@ psql -U postgres -l
 # Change PORT in backend/.env to a different port
 PORT=5001
 ```
+
+**CORS Errors**:
+- Ensure `FRONTEND_URL` in backend `.env` matches your frontend URL
+- For production, update Render environment variables
+- Backend allows: localhost:5173 and your Vercel domain
 
 ### Frontend Issues
 
@@ -378,9 +433,25 @@ This is an assignment project. Please reach out for any questions or clarificati
 ## 📧 Contact
 
 For any queries or support:
-- Email: your.email@example.com
-- GitHub: your-github-username
+- GitHub: [M1CTIAN](https://github.com/M1CTIAN)
+- Repository: [Highway-Delite](https://github.com/M1CTIAN/Highway-Delite)
 
 ---
 
 **Made with ❤️ for Internshala Fullstack Intern Assignment**
+
+### Assignment Compliance
+
+This project fully meets all requirements:
+- ✅ React + TypeScript with Vite
+- ✅ TailwindCSS for styling
+- ✅ All 4 pages implemented (Home, Details, Checkout, Result)
+- ✅ Responsive and mobile-friendly design
+- ✅ Node.js + Express backend
+- ✅ MongoDB database with Mongoose
+- ✅ All required API endpoints
+- ✅ Form validation and error handling
+- ✅ Complete booking flow
+- ✅ Hosted on Vercel (frontend) and Render (backend)
+- ✅ Royalty-free images from Unsplash
+- ✅ Comprehensive README with setup instructions
